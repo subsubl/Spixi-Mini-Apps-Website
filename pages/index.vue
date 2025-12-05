@@ -209,7 +209,7 @@ function handleModalClick(e) {
           
           <!-- Category and Status Badges -->
           <div class="flex flex-wrap gap-1.5 mb-3">
-            <span class="px-2 py-1 text-[10px] font-semibold rounded-md bg-accent/20 text-accent border border-accent/30">
+            <span v-if="app.category" class="px-2 py-1 text-[10px] font-semibold rounded-md bg-accent/20 text-accent border border-accent/30">
               {{ app.category }}
             </span>
             <span v-if="app.isPopular" class="px-2 py-1 text-[10px] font-semibold rounded-md bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
