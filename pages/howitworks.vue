@@ -14,7 +14,7 @@ useHead({
 </script>
 
 <template>
-    <div class="pt-[4em] pb-4 px-[2em] max-w-7xl mx-auto">
+    <div class="pt-6 pb-4 px-4 md:px-8 max-w-7xl mx-auto">
 
         <!-- Hero Section -->
         <div class="bg-gray-100 dark:bg-[#1B232B] rounded-3xl mb-16 overflow-hidden relative">
@@ -22,7 +22,7 @@ useHead({
             <div class="flex flex-col md:flex-row items-center justify-between py-16 px-10 gap-10 relative z-10">
                 <div class="md:w-3/5 inline-flex flex-col justify-between item">
                     <span class="text-accent uppercase tracking-widest text-xs font-bold mb-2 block">{{ t('pages.howitworks.subtitle1') }}</span>
-                    <h2 class="text-5xl font-lexend font-bold text-black dark:text-spixi-dark">
+                    <h2 class="text-3xl md:text-5xl font-lexend font-bold text-black dark:text-spixi-dark">
                         {{ t('pages.howitworks.title') }}
                     </h2>
                     <p class="text-lg text-spixi dark:text-gray-400 mt-6 leading-relaxed max-w-xl">
@@ -30,7 +30,7 @@ useHead({
                     </p>
                 </div>
                 <!-- Abstract visual representation of distributed nodes/apps -->
-                <div class="md:w-2/5 flex justify-center">
+                <div class="md:w-2/5 hidden md:flex justify-center">
                    <div class="relative w-64 h-64">
                        <div class="absolute inset-0 bg-accent/20 blur-[60px] rounded-full animate-pulse"></div>
                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-accent relative z-10 drop-shadow-xl">
@@ -102,8 +102,8 @@ useHead({
                 <h2 class="text-3xl font-lexend font-bold dark:text-white">{{ t('pages.howitworks.architecture.title') }}</h2>
             </div>
             
-            <div class="bg-card-bg/50 dark:bg-card-bg border border-gray-200 dark:border-white/5 rounded-3xl p-10 flex justify-center overflow-x-auto">
-                <div class="flex flex-col md:flex-row items-center gap-6 min-w-max">
+            <div class="bg-card-bg/50 dark:bg-card-bg border border-gray-200 dark:border-white/5 rounded-3xl p-6 md:p-10 flex justify-center">
+                <div class="flex flex-col items-center gap-6">
                     <!-- Spixi Host -->
                      <div class="flex flex-col items-center gap-4">
                         <div class="w-32 h-40 bg-spixi dark:bg-[#1F2937] text-white rounded-2xl flex items-center justify-center shadow-lg border-2 border-spixi/50 relative">
@@ -153,7 +153,7 @@ useHead({
             </div>
         </div>
 
-        <h2 class="text-5xl font-lexend text-black dark:text-spixi-dark py-4 mt-10 text-center" id="faq">
+        <h2 class="text-3xl md:text-5xl font-lexend text-black dark:text-spixi-dark py-4 mt-10 text-center" id="faq">
             {{ t('pages.howitworks.faq.title') }}
         </h2>
 
