@@ -14,9 +14,9 @@ const { t } = useI18n()
                 </div>
                 
                 <div class="my-4">
-                    <NuxtLink to="/download" class="border border-spixi dark:border-white text-black dark:text-white hover:bg-[#24BBFF] font-medium rounded-lg py-3 px-8">
+                    <a href="https://www.spixi.io" target="_blank" class="border border-spixi dark:border-white text-black dark:text-white hover:bg-[#24BBFF] font-medium rounded-lg py-3 px-8">
                         {{ t('pages.home.features.downloadnow') }}
-                    </NuxtLink>
+                    </a>
                 </div>
             </div>
             <div class="md:w-1/2 flex justify-end">

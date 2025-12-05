@@ -23,9 +23,6 @@ const { t } = useI18n()
           </div>
         </div>
         <div class="flex flex-col md:flex-row justify-between font-medium my-8 items-center gap-8">
-            <NuxtLink to="/download" class="text-gray-700 dark:text-white">
-              {{ t('footer.download') }}
-            </NuxtLink>
             <NuxtLink to="/howitworks" class="text-gray-700 dark:text-white">
               {{ t('footer.howitworks') }}
             </NuxtLink>

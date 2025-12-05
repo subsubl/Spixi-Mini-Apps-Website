@@ -149,12 +149,6 @@ const toggleDropdownLanguage = () => {
                             </li>
                         </ul>
                     </div>
-                    <div class="flex justify-center items-center mx-1 md:mx-6 text-sm rounded-lg">
-                      <NuxtLink to='/download'>
-                         <span class="rounded bg-[#6BFCC8] text-xs max-[400px]:text-[8px] md:text-base text-spixi font-medium px-1 md:px-4 py-2 text-center hover:opacity-90">
-                            {{ t('menu.newversion', { version: spixiVersion }) }}
-                        </span>
-                      </NuxtLink>
                     </div>
                     <button 
                         type="button" 
@@ -196,12 +190,6 @@ const toggleDropdownLanguage = () => {
                           {{ t('menu.builder') }}
                         </NuxtLink>
                       </li>
-                        <li class="py-3">
-                            <NuxtLink 
-                                to="/download" 
-                                class="block py-2 px-3 font-lexend text-4xl text-[#1D2329] dark:text-white hover:text-[#24BBFF] dark:hover:text-[#24BBFF]">
-                                {{ t('menu.download') }}
-                            </NuxtLink>
                         </li>
                         <li class="py-3">
                             <NuxtLink 

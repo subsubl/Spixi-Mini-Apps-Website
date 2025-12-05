@@ -212,9 +212,9 @@ function handleModalClick(e) {
                <h2 class="text-4xl font-lexend font-bold mb-4">{{ t('pages.mini-apps.cta.title') }}</h2>
                <p class="text-lg text-gray-300 mb-8 max-w-md">{{ t('pages.mini-apps.cta.desc') }}</p>
                 
-               <NuxtLink to="/download" class="inline-block bg-accent hover:bg-blue-600 text-white px-8 py-4 rounded-xl font-bold transition-colors">
+               <a href="https://www.spixi.io" target="_blank" class="inline-block bg-accent hover:bg-blue-600 text-white px-8 py-4 rounded-xl font-bold transition-colors">
                    {{ t('pages.mini-apps.cta.btn') }}
-               </NuxtLink>
+               </a>
                <p class="mt-4 text-xs text-gray-500">{{ t('pages.mini-apps.cta.note') }}</p>
            </div>
            <div class="md:w-1/2 relative z-10 flex justify-end mt-10 md:mt-0">
