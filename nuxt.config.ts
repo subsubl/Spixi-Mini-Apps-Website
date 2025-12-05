@@ -31,27 +31,53 @@ export default defineNuxtConfig({
             {
                 code: 'en',
                 file: 'en.json'
+            },
+        ],
+        lazy: true,
+        langDir: 'lang',
+        defaultLocale: 'en',
+        strategy: 'no_prefix',
+        compilation: {
+            strictMessage: false,
+            escapeHtml: false,
+        },
+    },
+
+    colorMode: {
+        classSuffix: '',
+        storageKey: 'color-theme',
+        preference: 'system',
         fallback: 'light',
-            },
+    },
 
-            googleFonts: {
-                families: {
-                    'Lexend': true,
-                }
-            },
+    googleFonts: {
+        families: {
+            'Lexend': true,
+        }
+    },
 
-            css: ['~/assets/css/main.css'],
+    css: ['~/assets/css/main.css'],
 
-            postcss: {
-                plugins: {
-                    tailwindcss: {},
-                    autoprefixer: {},
-                },
-            },
+    postcss: {
+        plugins: {
+            tailwindcss: {},
+            autoprefixer: {},
+        },
+    },
 
-            plugins: [
-                { src: '~/plugins/utils.client.js', ssr: false },
-            ],
+    plugins: [
+        { src: '~/plugins/utils.client.js', ssr: false },
+    ],
 
-            compatibilityDate: '2025-03-14',
+    app: {
+        baseURL: '/Spixi-Mini-Apps-Website/',
+        pageTransition: false,
+        head: {
+            title: 'Spixi',
+            charset: 'utf-8',
+            viewport: 'width=device-width, initial-scale=1',
+        },
+    },
+
+    compatibilityDate: '2025-03-14',
 })
