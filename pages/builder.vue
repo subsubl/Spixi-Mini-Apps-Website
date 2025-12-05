@@ -3,13 +3,14 @@ import JSZip from 'jszip';
 import { ref } from 'vue';
 
 const isDragging = ref(false);
-const files = ref<File[]>([]);
+const filesMap = ref<Map<string, File>>(new Map());
 const processing = ref(false);
 const error = ref<string | null>(null);
 const success = ref(false);
 
-const generatedZip = ref<{ url: string; name: string } | null>(null);
+const generatedZSpixi = ref<{ url: string; name: string } | null>(null);
 const generatedSpixi = ref<{ url: string; name: string } | null>(null);
+const generatedIcon = ref<{ url: string; name: string } | null>(null);
 
 const onDragOver = () => {
   isDragging.value = true;
@@ -19,34 +20,87 @@ const onDragLeave = () => {
   isDragging.value = false;
 };
 
-const onDrop = (e: DragEvent) => {
+// Recursive file reading helper
+const readEntry = async (entry: any, pathPrefix: string, rootFolder: string) => {
+    if (entry.isFile) {
+        await new Promise<void>((resolve) => {
+            entry.file((file: File) => {
+                const fullPath = pathPrefix + entry.name;
+                // Remove the root folder name from the path if it exists
+                // The rootFolder typically is "AppName/" so we want to strip that for the internal zip path
+                const zipPath = fullPath.startsWith(rootFolder) 
+                    ? fullPath.slice(rootFolder.length) 
+                    : fullPath;
+                
+                // console.log("Found:", zipPath);
+                filesMap.value.set(zipPath, file);
+                resolve();
+            });
+        });
+    } else if (entry.isDirectory) {
+        const reader = entry.createReader();
+        await new Promise<void>((resolve) => {
+            const readEntries = async () => {
+                reader.readEntries(async (entries: any[]) => {
+                    if (entries.length === 0) {
+                        resolve();
+                        return;
+                    }
+                    for (const child of entries) {
+                        await readEntry(child, pathPrefix + entry.name + '/', rootFolder);
+                    }
+                    // Recursively call readEntries because readEntries might not return all entries in one go
+                    readEntries(); 
+                });
+            };
+            readEntries();
+        });
+    }
+};
+
+const onDrop = async (e: DragEvent) => {
   isDragging.value = false;
   error.value = null;
   success.value = false;
+  filesMap.value.clear();
   
-  if (e.dataTransfer?.files) {
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    files.value = droppedFiles;
-    validateFiles();
-  }
-};
-
-const onFileSelect = (e: Event) => {
-  const input = e.target as HTMLInputElement;
-  if (input.files) {
-    files.value = Array.from(input.files);
-    validateFiles();
+  if (e.dataTransfer?.items) {
+    const items = e.dataTransfer.items;
+    processing.value = true;
+    
+    try {
+        for (const item of items) {
+            const entry = item.webkitGetAsEntry();
+            if (entry) {
+                // If it's a folder, we treat it as the root for our relative paths
+                const rootFolder = entry.name + '/';
+                await readEntry(entry, '', rootFolder);
+            }
+        }
+        validateFiles();
+    } catch (err) {
+        console.error(err);
+        error.value = "Error reading files. Please try again.";
+    } finally {
+        processing.value = false;
+    }
   }
 };
 
 const validateFiles = () => {
-    const hasAppInfo = files.value.some(f => f.name.toLowerCase() === 'appinfo.spixi');
-    const hasIndex = files.value.some(f => f.name.toLowerCase() === 'index.html');
-    
+    let hasAppInfo = false;
+    let hasIndexHtml = false;
+
+    for (const path of filesMap.value.keys()) {
+        const p = path.toLowerCase();
+        if (p === 'appinfo.spixi') hasAppInfo = true;
+        if (p === 'app/index.html') hasIndexHtml = true;
+    }
+
     if (!hasAppInfo) {
-        error.value = "Missing 'appinfo.spixi'. Please include it.";
-    } else if (!hasIndex) {
-        error.value = "Missing 'index.html'. Please include it.";
+        error.value = "Missing 'appinfo.spixi'. Please include it in the root of your folder.";
+    } else if (!hasIndexHtml) {
+        error.value = "Missing 'app/index.html'. Please ensure your structure is correct.";
     } else {
         error.value = null;
     }
@@ -84,18 +138,22 @@ const computeSHA256 = async (blob: Blob) => {
 };
 
 const packApp = async () => {
-    if (processing.value) return;
+    if (processing.value || error.value) return;
     processing.value = true;
     error.value = null;
     success.value = false;
 
     try {
-        const appInfoFile = files.value.find(f => f.name.toLowerCase() === 'appinfo.spixi');
-        const indexFile = files.value.find(f => f.name.toLowerCase() === 'index.html');
-        const iconFile = files.value.find(f => f.name.toLowerCase() === 'icon.png');
+        const appInfoFile = Array.from(filesMap.value.entries()).find(
+            ([path]) => path.toLowerCase() === 'appinfo.spixi'
+        )?.[1];
+        
+        const iconFile = Array.from(filesMap.value.entries()).find(
+            ([path]) => path.toLowerCase() === 'icon.png'
+        )?.[1];
 
-        if (!appInfoFile || !indexFile) {
-            throw new Error("Missing required files (appinfo.spixi or index.html)");
+        if (!appInfoFile) {
+            throw new Error("Missing required file: appinfo.spixi");
         }
 
         // Read app info
@@ -103,36 +161,28 @@ const packApp = async () => {
         const appInfo = parseAppInfo(appInfoText);
         
         const baseName = (appInfo.name || 'app').trim().replace(/\s+/g, '-').toLowerCase();
-        const imageUrl = appInfo.image || `${baseName}.png`;
-        const contentUrl = appInfo.contentUrl || `${baseName}.zip`;
+        // According to new logic, image and contentUrl are forced derived from name if existing
+        const imageUrl = `${baseName}.png`;
+        const contentUrl = `${baseName}.zspixiapp`;
 
         // Create Zip
         const zip = new JSZip();
         
-        // Add files to zip
-        // Structure:
-        // - appinfo.spixi (root)
-        // - icon.png (root)
-        // - app/index.html 
-        
-        zip.file('appinfo.spixi', appInfoFile); // Keep appinfo in root for the zip? Wait, original pack-app.js logic:
-        // pack-app.js: Line 125: if (!relativePath.startsWith('app/') && !relativePath.startsWith('appinfo.spixi') && !relativePath.startsWith('icon.png')) continue;
-        // It zips specific relative paths.
-        // Usually Spixi apps are distributed as:
-        // The ZIP contains THE APP CONTENT (app folder). 
-        // Wait, let's re-read pack-app.js.
-        // Line 132: zip.file(relativePath, fileContent);
-        // It adds 'app/index.html', 'appinfo.spixi', 'icon.png' TO THE ZIP under those paths.
-        // So the zip has folders.
-        
-        zip.file('appinfo.spixi', appInfoFile);
-        zip.folder('app')?.file('index.html', indexFile);
-        
-        if (iconFile) {
-            zip.file('icon.png', iconFile);
+        // Add files to zip - Strict Filtering
+        for (const [path, file] of filesMap.value.entries()) {
+             if (!path.startsWith('app/') 
+                 && !path.startsWith('appinfo.spixi') 
+                 && !path.startsWith('icon.png')) {
+                 continue;
+             }
+             zip.file(path, file);
         }
 
-        const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+        const zipBlob = await zip.generateAsync({ 
+            type: 'blob', 
+            compression: 'DEFLATE',
+            compressionOptions: { level: 6 } 
+        });
         const zipSize = zipBlob.size;
         const checksum = await computeSHA256(zipBlob);
 
@@ -154,18 +204,28 @@ contentSize = ${zipSize}`;
         const spixiBlob = new Blob([spixiContent], { type: 'text/plain' });
 
         // Create download URLs
-        if (generatedZip.value) URL.revokeObjectURL(generatedZip.value.url);
+        if (generatedZSpixi.value) URL.revokeObjectURL(generatedZSpixi.value.url);
         if (generatedSpixi.value) URL.revokeObjectURL(generatedSpixi.value.url);
+        if (generatedIcon.value) URL.revokeObjectURL(generatedIcon.value.url);
 
-        generatedZip.value = {
+        generatedZSpixi.value = {
             url: URL.createObjectURL(zipBlob),
-            name: `${baseName}.zip`
+            name: `${baseName}.zspixiapp`
         };
 
         generatedSpixi.value = {
             url: URL.createObjectURL(spixiBlob),
             name: `${baseName}.spixi`
         };
+
+        if (iconFile) {
+            generatedIcon.value = {
+                url: URL.createObjectURL(iconFile),
+                name: `${baseName}.png`
+            };
+        } else {
+            generatedIcon.value = null;
+        }
 
         success.value = true;
 
@@ -184,7 +244,7 @@ contentSize = ${zipSize}`;
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold mb-2 text-gray-900 dark:text-white">Mini App Packer</h1>
         <p class="text-gray-600 dark:text-gray-400">
-          Pack your Spixi Mini App directly in the browser. No installation required.
+          Pack specific Spixi Mini App folder directly in the browser.
         </p>
       </div>
 
@@ -193,63 +253,45 @@ contentSize = ${zipSize}`;
         :class="[
           isDragging
             ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10'
-            : 'border-gray-300 dark:border-gray-700 hover:border-primary-400 dark:hover:border-primary-600',
-          files.length > 0 ? 'bg-gray-50 dark:bg-gray-800' : ''
+            : (error ? 'border-red-500 dark:border-red-500 bg-red-50 dark:bg-red-900/10' : 'border-gray-300 dark:border-gray-700 hover:border-primary-400 dark:hover:border-primary-600'),
+          filesMap.size > 0 && !error ? 'bg-gray-50 dark:bg-gray-800' : ''
         ]"
         @dragover.prevent="onDragOver"
         @dragleave.prevent="onDragLeave"
         @drop.prevent="onDrop"
-        @click="$refs.fileInput.click()"
       >
-        <input
-          ref="fileInput"
-          type="file"
-          multiple
-          class="hidden"
-          @change="onFileSelect"
-        />
-
-        <div v-if="files.length === 0" class="space-y-4">
+        <div v-if="filesMap.size === 0" class="space-y-4">
           <div class="flex justify-center">
             <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
             </svg>
           </div>
           <div>
             <p class="text-lg font-medium text-gray-700 dark:text-gray-300">
-              Drop files here or click to upload
+              Drop your app folder here
             </p>
             <p class="text-sm text-gray-500 mt-2">
-              Required: appinfo.spixi, index.html<br>
-              Optional: icon.png
+              Must contain: appinfo.spixi, app/index.html
             </p>
           </div>
         </div>
 
         <div v-else class="space-y-4">
           <div class="flex flex-col items-center space-y-2">
-            <div v-for="file in files" :key="file.name" class="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 px-3 py-1 rounded shadow-sm">
-                <span v-if="['appinfo.spixi', 'index.html'].includes(file.name.toLowerCase())" class="text-green-500">
-                    ✓
-                </span>
-                <span v-else-if="file.name.toLowerCase() === 'icon.png'" class="text-blue-500">
-                    ℹ
-                </span>
-                <span v-else class="text-gray-400">?</span>
-                <span>{{ file.name }}</span>
-                <span class="text-xs text-gray-400">({{ bytesToNice(file.size) }})</span>
+            <div class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                Loaded {{ filesMap.size }} files
             </div>
           </div>
           <div v-if="error" class="text-red-500 text-sm font-medium mt-4">
             {{ error }}
           </div>
           <div v-else class="mt-4">
-             <p class="text-green-500 font-medium">Ready to pack!</p>
+             <p class="text-green-500 font-medium">Structure Valid. Ready to pack!</p>
           </div>
         </div>
       </div>
 
-      <div class="mt-8 text-center" v-if="files.length > 0 && !error">
+      <div class="mt-8 text-center" v-if="filesMap.size > 0 && !error">
         <button
           @click.stop="packApp"
           :disabled="processing"
@@ -260,31 +302,38 @@ contentSize = ${zipSize}`;
         </button>
       </div>
 
-      <div v-if="success && generatedZip && generatedSpixi" class="mt-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+      <div v-if="success && generatedZSpixi && generatedSpixi" class="mt-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
         <h2 class="text-xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
             <span class="text-green-500 mr-2">✓</span> Packing Complete
         </h2>
         
-        <div class="grid gap-4 md:grid-cols-2">
-            <a :href="generatedZip.url" :download="generatedZip.name" class="flex flex-col items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <a :href="generatedZSpixi.url" :download="generatedZSpixi.name" class="flex flex-col items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
                 <svg class="w-10 h-10 text-primary-500 mb-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
-                <span class="font-medium text-gray-900 dark:text-white">{{ generatedZip.name }}</span>
-                <span class="text-xs text-gray-500 mt-1">Application Archive</span>
+                <span class="font-medium text-gray-900 dark:text-white truncate max-w-full px-2" :title="generatedZSpixi.name">{{ generatedZSpixi.name }}</span>
+                <span class="text-xs text-gray-500 mt-1">App Archive</span>
             </a>
 
             <a :href="generatedSpixi.url" :download="generatedSpixi.name" class="flex flex-col items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
                 <svg class="w-10 h-10 text-primary-500 mb-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span class="font-medium text-gray-900 dark:text-white">{{ generatedSpixi.name }}</span>
+                <span class="font-medium text-gray-900 dark:text-white truncate max-w-full px-2" :title="generatedSpixi.name">{{ generatedSpixi.name }}</span>
                 <span class="text-xs text-gray-500 mt-1">Metadata File</span>
             </a>
+
+            <div v-if="generatedIcon" class="flex flex-col items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group relative">
+                <a :href="generatedIcon.url" :download="generatedIcon.name" class="absolute inset-0 z-10 w-full h-full"></a>
+                <img :src="generatedIcon.url" class="w-10 h-10 mb-3 object-contain group-hover:scale-110 transition-transform"/>
+                <span class="font-medium text-gray-900 dark:text-white truncate max-w-full px-2" :title="generatedIcon.name">{{ generatedIcon.name }}</span>
+                <span class="text-xs text-gray-500 mt-1">Icon</span>
+            </div>
         </div>
 
         <div class="mt-6 text-sm text-gray-500 dark:text-gray-400 text-center">
-            <p>Drag these files into your Spixi chat to share the app!</p>
+            <p>Upload these files to your web host to distribute your Mini App.</p>
         </div>
       </div>
     </div>
