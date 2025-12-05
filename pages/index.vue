@@ -279,6 +279,18 @@ function handleModalClick(e) {
                             <p class="text-sm text-gray-500">{{ t('pages.mini-apps.build.features.distribution.desc') }}</p>
                         </div>
                     </div>
+                    
+                    <!-- Builder CTA Button -->
+                    <div class="mt-8">
+                        <NuxtLink to="/builder" class="inline-flex items-center gap-2 bg-accent hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16.5 9.4 7.5 4.21 7.5 14.79 16.5 20 16.5 9.4"></polyline>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                            Pack Your App
+                        </NuxtLink>
+                    </div>
                 </div>
             </div>
             <div class="lg:w-1/2 flex justify-center relative">
