@@ -12,8 +12,8 @@ const searchQuery = ref('')
 const selectedCategory = ref('All')
 const categories = ['All', 'Games', 'Productivity', 'Tools', 'Social']
 
-// Filter method (not computed to avoid reactivity issues)
-function getFilteredApps() {
+// Filtered apps as computed (Vue will track reactivity)
+const filteredApps = computed(() => {
   if (!apps.value) return []
   
   let result = [...apps.value] // Clone to avoid mutation
@@ -33,7 +33,7 @@ function getFilteredApps() {
   }
   
   return result
-}
+})
 
 // Modal state
 const showModal = ref(false)
@@ -178,7 +178,7 @@ function handleModalClick(e) {
       </div>
 
       <!-- No Results State -->
-      <div v-else-if="apps && getFilteredApps().length === 0" class="text-center py-16">
+      <div v-else-if="apps && filteredApps.length === 0" class="text-center py-16">
         <div class="text-6xl mb-4">🔍</div>
         <h3 class="text-2xl font-bold text-white mb-2">No apps found</h3>
         <p class="text-gray-400 mb-6">Try adjusting your search or filters</p>
@@ -192,7 +192,7 @@ function handleModalClick(e) {
 
       <!-- App Cards Grid -->
       <div v-else-if="apps" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="app in getFilteredApps()" :key="app.id" 
+        <div v-for="app in filteredApps" :key="app.id" 
              @click="openModal(app)"
              class="app-card bg-card-bg rounded-2xl p-6 border border-white/5 hover:border-accent/50 flex flex-col h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-accent/10 group cursor-pointer">
           <div class="flex items-start justify-between mb-3">
