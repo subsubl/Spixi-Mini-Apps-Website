@@ -197,9 +197,9 @@ function handleModalClick(e) {
                 </div>
                 <h3 class="text-white font-bold text-xl mb-2">{{ t('pages.mini-apps.build.cards.packer.title') }}</h3>
                 <p class="text-gray-400 text-sm mb-6">{{ t('pages.mini-apps.build.cards.packer.desc') }}</p>
-                <a href="#" class="text-accent hover:text-white font-medium text-sm flex items-center gap-1 transition-colors">
+                <NuxtLink to="/builder" class="text-accent hover:text-white font-medium text-sm flex items-center gap-1 transition-colors">
                     {{ t('pages.mini-apps.build.cards.packer.btn') }} &rarr;
-                </a>
+                </NuxtLink>
             </div>
         </div>
     </section>
