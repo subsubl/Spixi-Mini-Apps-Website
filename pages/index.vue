@@ -8,7 +8,7 @@ const { t } = useI18n()
 const { data: apps, pending } = await useFetch('/api/apps')
 
 // Search and filter state
-const searchQuery =ref('')
+const searchQuery = ref('')
 const selectedCategory = ref('All')
 const categories = ['All', 'Games', 'Productivity', 'Tools', 'Social']
 
