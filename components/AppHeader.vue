@@ -117,8 +117,9 @@ const toggleDropdownLanguage = () => {
     <header>
         <nav class="bg-transparent border-gray-200">
             <div class="max-w-screen-xl flex flex-nowrap md:flex-wrap items-center justify-between mx-auto p-4">
-                <NuxtLink to="/" activeClass="font-bold" id="logo">
+                <NuxtLink to="/" activeClass="font-bold" id="logo" class="flex items-center gap-3">
                     <BaseLogo />
+                    <span class="text-xl md:text-2xl font-lexend font-bold text-gray-900 dark:text-white">Mini Apps</span>
                 </NuxtLink>
 
                 <div class="flex justify-end items-center">
