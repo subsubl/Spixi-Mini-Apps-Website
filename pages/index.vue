@@ -32,14 +32,14 @@ function handleModalClick(e) {
 <template>
   <div>
     <!-- Hero Section -->
-    <div class="pt-[4em] pb-4 px-[2em] max-w-7xl mx-auto">
+    <div class="pt-6 pb-4 px-4 md:px-8 max-w-7xl mx-auto">
       <div class="bg-hero-gradient rounded-3xl relative overflow-hidden text-white shadow-2xl">
         <img src="/img/pattern.png" class="absolute object-cover top-0 right-0 h-full opacity-30 pointer-events-none mix-blend-overlay" alt="Pattern">
         <div class="flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
           <div class="md:w-1/2 inline-flex flex-col gap-6 justify-between item p-12">
             <div>
               <span class="text-accent uppercase tracking-widest text-xs font-bold mb-2 block">Spixi Mini Apps</span>
-              <h2 class="text-5xl font-lexend font-bold leading-tight">
+              <h2 class="text-3xl md:text-5xl font-lexend font-bold leading-tight">
                 {{ t('pages.mini-apps.title') }}
               </h2>
             </div>
@@ -51,7 +51,7 @@ function handleModalClick(e) {
                  <a href="#build" class="border border-white/20 hover:bg-white/10 text-white px-6 py-3 rounded-xl font-medium transition-colors">{{ t('pages.mini-apps.buildYourApp') }}</a>
             </div>
           </div>
-          <div class="md:w-1/2 flex justify-center pr-8 relative">
+          <div class="md:w-1/2 hidden md:flex justify-center pr-8 relative">
             <div class="absolute inset-0 bg-accent/20 blur-[100px] rounded-full pointer-events-none"></div>
             <NuxtImg src="/img/mini-l.png" class="dark:hidden relative z-10 drop-shadow-2xl" alt="Spixi Mini Apps Light"/>
             <NuxtImg src="/img/mini-d.png" class="hidden dark:block relative z-10 drop-shadow-2xl" alt="Spixi Mini Apps Dark"/>

@@ -13,8 +13,8 @@ useHead({
 </script>
 
 <template>
-    <div class="pt-[4em] pb-4 px-[2em] max-w-7xl mx-auto">
-        <h1 class="font-lexend text-5xl font-semibold text-black dark:text-spixi-dark leading-normal text-center">
+    <div class="pt-6 pb-4 px-4 md:px-8 max-w-7xl mx-auto">
+        <h1 class="font-lexend text-3xl md:text-5xl font-semibold text-black dark:text-spixi-dark leading-normal text-center">
             {{ t('pages.terms.title') }}
         </h1>
         <h3 class="font-lexend font-semibold text-black dark:text-spixi-dark text-center mt-4" v-if="te('pages.terms.translation')">

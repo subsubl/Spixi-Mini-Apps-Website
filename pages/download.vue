@@ -21,12 +21,12 @@ const downloads = {
 </script>
 
 <template>
-    <div class="pt-[4em] pb-4 px-[2em] max-w-7xl mx-auto">
+    <div class="pt-6 pb-4 px-4 md:px-8 max-w-7xl mx-auto">
 
         <div class="bg-white dark:bg-[#090B0D] rounded-2xl">
             <div class="flex flex-col md:flex-row items-center justify-between gap-10">
                 <div class="md:w-1/2 inline-flex flex-col gap-4 justify-between item p-10">
-                    <h2 class="text-5xl font-lexend font-semibold text-black dark:text-spixi-dark pt-4">
+                    <h2 class="text-3xl md:text-5xl font-lexend font-semibold text-black dark:text-spixi-dark pt-4">
                         {{ t('pages.download.title') }}
                     </h2>
                     <p class="text-base text-spixi dark:text-spixi-dark mt-4">
@@ -34,7 +34,7 @@ const downloads = {
                         {{ t('pages.download.subtitle2') }}
                     </p>
                 </div>
-                <div class="md:w-1/2 flex justify-center pr-8">
+                <div class="md:w-1/2 hidden md:flex justify-center pr-8">
                     <NuxtImg src="/img/SpixiSummaryLight.png" v-show="$colorMode.value === 'light'" />
                     <NuxtImg src="/img/SpixiSummaryDark.png" v-show="$colorMode.value === 'dark'" />
                 </div>
