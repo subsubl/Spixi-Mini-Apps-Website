@@ -1,0 +1,110 @@
+[
+    {
+        "id": "com.baracuda.spixi.coinflip",
+        "name": "Coin Flip",
+        "version": "1.0.2",
+        "description": "",
+        "publisher": "Baracuda",
+        "category": "Utility",
+        "icon": "apps/com.baracuda.spixi.coinflip/icon.png"
+    },
+    {
+        "id": "com.baracuda.spixi.dentistgame",
+        "name": "Dentist Mystery",
+        "version": "3.1.1",
+        "description": "A thrilling detective mystery adventure!",
+        "publisher": "Unknown",
+        "category": "Utility",
+        "icon": "apps/com.baracuda.spixi.dentistgame/icon.png"
+    },
+    {
+        "id": "com.baracuda.spixi.doom",
+        "name": "DOOM",
+        "version": "1.0.4",
+        "description": "",
+        "publisher": "Baracuda",
+        "category": "Utility",
+        "icon": "apps/com.baracuda.spixi.doom/icon.png"
+    },
+    {
+        "id": "com.baracuda.spixi.kalker",
+        "name": "Kalker",
+        "version": "1.0.0",
+        "description": "",
+        "publisher": "Baracuda",
+        "category": "Utility",
+        "icon": "apps/com.baracuda.spixi.kalker/icon.png"
+    },
+    {
+        "id": "com.baracuda.spixi.pong",
+        "name": "Pong",
+        "version": "3.10.12",
+        "description": "",
+        "publisher": "Baracuda",
+        "category": "Utility",
+        "icon": "apps/com.baracuda.spixi.pong/icon.png"
+    },
+    {
+        "id": "com.baracuda.spixi.survivalmanual",
+        "name": "SurvivalManual",
+        "version": "1.0.2",
+        "description": "Survival Manual for Spixi",
+        "publisher": "Unknown",
+        "category": "Utility",
+        "icon": "apps/com.baracuda.spixi.survivalmanual/icon.png"
+    },
+    {
+        "id": "com.ixilabs.spixi.auth",
+        "name": "Spixi Authenticator",
+        "version": "1.0.0",
+        "description": "",
+        "publisher": "IXI Labs",
+        "category": "Utility",
+        "icon": "apps/com.ixilabs.spixi.auth/icon.png"
+    },
+    {
+        "id": "com.ixilabs.spixi.doomwasm",
+        "name": "DoomWASM",
+        "version": "1.0.0",
+        "description": "",
+        "publisher": "IXI Labs",
+        "category": "Utility",
+        "icon": "apps/com.ixilabs.spixi.doomwasm/icon.png"
+    },
+    {
+        "id": "com.ixilabs.spixi.gate-control",
+        "name": "Gate Control",
+        "version": "1.0.2",
+        "description": "",
+        "publisher": "IXI Labs",
+        "category": "Utility",
+        "icon": "apps/com.ixilabs.spixi.gate-control/icon.png"
+    },
+    {
+        "id": "com.ixilabs.spixi.mini-apps-test",
+        "name": "Mini Apps Test",
+        "version": "1.1.0",
+        "description": "",
+        "publisher": "IXI Labs",
+        "category": "Utility",
+        "icon": "apps/com.ixilabs.spixi.mini-apps-test/icon.png"
+    },
+    {
+        "id": "com.ixilabs.spixi.tictactoe",
+        "name": "Tic-Tac-Toe",
+        "version": "1.0.6",
+        "description": "",
+        "publisher": "IXI Labs",
+        "category": "Utility",
+        "icon": "apps/com.ixilabs.spixi.tictactoe/icon.png"
+    },
+    {
+        "id": "com.ixilabs.spixi.video-test",
+        "name": "Spixi Video Test",
+        "version": "0.1.0",
+        "description": "",
+        "publisher": "IXI Labs",
+        "category": "Utility",
+        "icon": "apps/com.ixilabs.spixi.video-test/icon.png"
+    }
+]
