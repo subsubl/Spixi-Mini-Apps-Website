@@ -68,7 +68,7 @@ function handleModalClick(e) {
           <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">{{ app.description }}</p>
           <div class="flex gap-3 mt-auto">
             <button @click="openModal(app)" 
-                    class="flex-1 bg-accent hover:bg-blue-400 text-white font-medium py-2.5 px-4 rounded-xl text-center transition-colors">
+                    class="flex-1 bg-[#0456A9] hover:bg-[#003D79] text-white rounded-xl py-3 px-8 dark:text-black dark:bg-[#3898FA] dark:hover:bg-[#6AB2FB] font-medium text-center transition-colors">
               {{ t('pages.mini-apps.tryNow') }}
             </button>
             <a :href="app.sourceUrl" target="_blank" 
