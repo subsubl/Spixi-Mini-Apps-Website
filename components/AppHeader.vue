@@ -149,7 +149,6 @@ const toggleDropdownLanguage = () => {
                             </li>
                         </ul>
                     </div>
-                    </div>
                     <button 
                         type="button" 
                         class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" 
